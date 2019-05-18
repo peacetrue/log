@@ -1,0 +1,19 @@
+{
+  "hints": [],
+  "groups": [
+    {
+      "sourceType": "com.github.peacetrue.log.mybatis.LogProperties",
+      "name": "peacetrue.log",
+      "type": "com.github.peacetrue.log.mybatis.LogProperties"
+    }
+  ],
+  "properties": [
+    {
+      "sourceType": "com.github.peacetrue.log.mybatis.LogProperties",
+      "defaultValue": "log",
+      "name": "peacetrue.log.table-name",
+      "description": "表名",
+      "type": "java.lang.String"
+    }
+  ]
+}

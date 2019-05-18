@@ -1,0 +1,13 @@
+= 日志组件
+xiayx <xiayouxue@hotmail.com>
+v1.0, 2019-05-15: SNAPSHOT
+:doctype: docbook
+:toc: left
+:numbered:
+:imagesdir: assets/images
+:sourcedir: src/main/java
+:resourcesdir: src/main/resources
+:testsourcedir: src/test/java
+:source-highlighter: highlightjs
+
+== 关于环绕通知的封装

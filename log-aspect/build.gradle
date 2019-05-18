@@ -1,0 +1,17 @@
+description '日志切面'
+
+dependencies {
+
+    compile project(":log-service-api")
+    compile "org.slf4j:slf4j-api"
+    compile 'org.aspectj:aspectjweaver'
+    compile "com.fasterxml.jackson.core:jackson-databind"
+    compile "org.springframework.boot:spring-boot-autoconfigure"
+    compileClasspath "org.springframework.boot:spring-boot-configuration-processor"
+
+    testCompile "junit:junit"
+    testCompileOnly "org.projectlombok:lombok"
+    testAnnotationProcessor "org.projectlombok:lombok"
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+    testCompile 'org.springframework.boot:spring-boot-starter-logging'
+}

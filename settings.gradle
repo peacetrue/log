@@ -1,0 +1,6 @@
+rootProject.name = 'log'
+include 'log-service-api'
+include 'log-service-mybatis'
+include 'log-controller'
+include 'log-aspect'
+include 'log-sample'
