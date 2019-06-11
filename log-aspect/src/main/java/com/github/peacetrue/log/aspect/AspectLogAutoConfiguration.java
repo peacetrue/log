@@ -1,5 +1,6 @@
 package com.github.peacetrue.log.aspect;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.peacetrue.aspect.AroundInterceptor;
 import com.github.peacetrue.aspect.AroundService;
@@ -85,7 +86,9 @@ public class AspectLogAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(ObjectMapper.class)
     public ObjectMapper objectMapper() {
-        return new ObjectMapper();
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        return objectMapper;
     }
 
     /** 日志任务执行器 */
