@@ -14,6 +14,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * @author xiayx
  */
@@ -44,8 +47,19 @@ public class LogServiceImplTest {
 
     @Test
     public void query() throws Exception {
-        this.add();
         Page<Log> page = logService.query(new QueryParams(), new PageRequest(0, 10));
         System.out.println(page.getContent());
+    }
+
+    @Test
+    public void getLatest() throws Exception {
+        Log log = logService.getLatest("1", 1);
+        System.out.println(log);
+    }
+
+    @Test
+    public void getLatestList() throws Exception {
+        List<Log> logs = logService.getLatest("1", Arrays.asList(1, 2));
+        System.out.println(logs);
     }
 }

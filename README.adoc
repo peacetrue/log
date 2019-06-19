@@ -1,0 +1,17 @@
+= 日志组件
+xiayx <xiayouxue@hotmail.com>
+v1.0, 2019-05-19: SNAPSHOT
+:doctype: docbook
+:toc: left
+:numbered:
+:imagesdir: docs/assets/images
+:sourcedir: src/main/java
+:resourcesdir: src/main/resources
+:testsourcedir: src/test/java
+:source-highlighter: highlightjs
+
+== 模块说明
+image::structure.png[]
+
+== 使用说明
+

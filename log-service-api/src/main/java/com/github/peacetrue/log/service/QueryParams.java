@@ -1,6 +1,6 @@
 package com.github.peacetrue.log.service;
 
-import com.github.peacetrue.core.Range;
+import com.github.peacetrue.util.Range;
 import lombok.Data;
 
 import java.io.Serializable;

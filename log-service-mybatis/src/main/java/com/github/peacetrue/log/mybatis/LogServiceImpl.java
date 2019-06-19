@@ -4,10 +4,17 @@ import com.github.pagehelper.PageHelper;
 import com.github.peacetrue.log.service.Log;
 import com.github.peacetrue.log.service.LogService;
 import com.github.peacetrue.log.service.QueryParams;
+import com.github.peacetrue.mybatis.LimitAndOffsetAdapter;
+import com.github.peacetrue.mybatis.dynamic.sql.GroupConcat;
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Converter;
 import org.mybatis.dynamic.sql.SortSpecification;
+import org.mybatis.dynamic.sql.SqlBuilder;
+import org.mybatis.dynamic.sql.SqlColumn;
+import org.mybatis.dynamic.sql.render.RenderingStrategy;
+import org.mybatis.dynamic.sql.select.SelectDSL;
 import org.mybatis.dynamic.sql.select.SimpleSortSpecification;
+import org.mybatis.dynamic.sql.select.render.SelectStatementProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +27,10 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+
+import static com.github.peacetrue.log.mybatis.LogDynamicSqlSupport.log;
 
 /**
  * @author xiayx
@@ -53,6 +63,44 @@ public class LogServiceImpl<T extends Log> implements LogService<T> {
 
         if (entities.isEmpty()) return new PageImpl<>(Collections.emptyList());
         return new PageImpl<>(entities, pageable, ((com.github.pagehelper.Page) entities).getTotal());
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public T getLatest(String moduleCode, Object recordId) {
+        logger.info("获取[{}-{}]最近的操作记录", moduleCode, recordId);
+        return SelectDSL.select(
+                selectModel -> LimitAndOffsetAdapter.lastOne(selectModel, logMapper::selectMany),
+                SqlColumn.of("*", log))
+                .from(log)
+                .where(log.moduleCode, SqlBuilder.isEqualTo(moduleCode))
+                .and((SqlColumn<Object>) log.recordId, SqlBuilder.isEqualTo(recordId))
+                .orderBy(log.createdTime.descending())
+                .build().execute().stream().reduce(null, (l, r) -> r);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<T> getLatest(String moduleCode, List<?> recordIds) {
+        logger.info("获取[{}-{}]最近的操作记录", moduleCode, recordIds);
+        GroupConcat groupConcat = GroupConcat.of(log.id);
+        SelectStatementProvider provider = SqlBuilder.select(groupConcat.withSort(log.createdTime.descending()))
+                .from(log)
+                .where(log.moduleCode, SqlBuilder.isEqualTo(moduleCode))
+                .and((SqlColumn<Object>) log.recordId, SqlBuilder.isIn((List<Object>) recordIds))
+                .groupBy(log.moduleCode, log.recordId)
+                .build().render(RenderingStrategy.MYBATIS3);
+        List<String> ids = logMapper.genericSelectMany(provider);
+        logger.debug("取得所有日志主键: {}", ids);
+        if (ids.isEmpty()) return Collections.emptyList();
+
+        List<Object> groupedIds = ids.stream().map(groupConcat::getFirstValue).collect(Collectors.toList());
+        logger.debug("取得分组后的日志主键: {}", ids);
+
+        provider = SqlBuilder.select(SqlColumn.of("*", log))
+                .from(log).where((SqlColumn<Object>) log.id, SqlBuilder.isIn(groupedIds))
+                .build().render(RenderingStrategy.MYBATIS3);
+        return logMapper.selectMany(provider);
     }
 
     private SortSpecification[] toSortSpecifications(Sort sort) {

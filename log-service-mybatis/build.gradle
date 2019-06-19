@@ -5,7 +5,7 @@ configurations {
 }
 
 task testJar(type: Jar) {
-    classifier "test"
+    archiveClassifier = 'test'
     from sourceSets.test.output
 }
 
@@ -24,7 +24,6 @@ dependencies {
     compile 'org.mybatis:mybatis-spring'
     compile 'com.github.pagehelper:pagehelper-spring-boot-starter:1.2.3'
     compile 'org.springframework.data:spring-data-commons'
-    compile 'com.github.peacetrue:peacetrue-spring:1.0-SNAPSHOT'
     compile 'com.google.guava:guava:23.0'
 
     testCompile 'junit:junit'

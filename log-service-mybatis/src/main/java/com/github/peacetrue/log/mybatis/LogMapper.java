@@ -61,6 +61,9 @@ public interface LogMapper<T extends Log> {
     })
     List<T> selectMany(SelectStatementProvider selectStatement);
 
+    @SelectProvider(type = SqlProviderAdapter.class, method = "select")
+    <R> List<R> genericSelectMany(SelectStatementProvider selectStatement);
+
 
     @SuppressWarnings("unchecked")
     default List<T> selectMany(QueryParams queryParams, SortSpecification... sortSpecifications) {
