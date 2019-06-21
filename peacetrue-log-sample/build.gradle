@@ -1,12 +1,12 @@
 dependencies {
 
-    compile project(":log-service-mybatis")
-    compile project(":log-aspect")
+    compile project(":peacetrue-log-service-mybatis")
+    compile project(":peacetrue-log-aspect")
     compile "org.springframework:spring-jdbc"
 
     testCompile 'junit:junit'
     testCompile 'org.springframework.boot:spring-boot-starter-test'
     testCompile 'com.fasterxml.jackson.core:jackson-databind'
     testCompile 'org.mybatis.spring.boot:mybatis-spring-boot-starter'
-    testCompile project(path: ':log-service-mybatis', configuration: 'testArtifacts')
+    testCompile project(path: ':peacetrue-log-service-mybatis', configuration: 'testArtifacts')
 }

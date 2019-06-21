@@ -60,6 +60,6 @@ public class LogServiceImplTest {
     @Test
     public void getLatestList() throws Exception {
         List<Log> logs = logService.getLatest("1", Arrays.asList(1, 2));
-        System.out.println(logs);
+        System.out.println(logs.size());
     }
 }

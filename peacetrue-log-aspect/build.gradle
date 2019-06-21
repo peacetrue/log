@@ -2,7 +2,7 @@ description '日志切面'
 
 dependencies {
 
-    compile project(":log-service-api")
+    compile project(":peacetrue-log-service-api")
     compile "org.slf4j:slf4j-api"
     compile 'org.aspectj:aspectjweaver'
     compile "com.fasterxml.jackson.core:jackson-databind"

@@ -15,7 +15,7 @@ artifacts {
 
 dependencies {
 
-    compile project(":log-service-api")
+    compile project(":peacetrue-log-service-api")
     compile "org.springframework.boot:spring-boot-autoconfigure"
     compileOnly "org.springframework.boot:spring-boot-configuration-processor"
     compile 'org.slf4j:slf4j-api'
