@@ -38,7 +38,7 @@ subprojects { project ->
         }
     }
 
-    group 'com.github.peacetrue'
+    group 'com.github.peacetrue.log'
     version '1.0-SNAPSHOT'
     description '基于spring-boot的操作日志组件'
 

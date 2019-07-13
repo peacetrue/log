@@ -1,7 +1,6 @@
 package com.github.peacetrue.log.aspect;
 
 import com.github.peacetrue.expression.AfterMethodBasedEvaluationContext;
-import lombok.Getter;
 import lombok.ToString;
 import org.springframework.core.ParameterNameDiscoverer;
 
