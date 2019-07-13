@@ -52,7 +52,7 @@ public class DefaultLogBuilder extends AbstractLogBuilder {
 
     @Override
     protected String parseOperateCode(LogEvaluationContext context, String expression) {
-        return expression;
+        return expressionParser.parseExpression(expression, ParserContext.TEMPLATE_EXPRESSION).getValue(context, String.class);
     }
 
     @Override
