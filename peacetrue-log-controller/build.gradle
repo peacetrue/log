@@ -2,15 +2,12 @@ description '日志控制器'
 
 dependencies {
 
-    compile project(":peacetrue-log-service-api")
-    compile 'org.slf4j:slf4j-api'
-    compile "org.springframework:spring-webmvc"
-    compile 'org.springframework.data:spring-data-commons'
-    compile "org.springframework.boot:spring-boot-autoconfigure"
+    api project(":peacetrue-log-service-api")
+    api 'org.slf4j:slf4j-api'
+    implementation "org.springframework:spring-webmvc"
+    implementation 'org.springframework.data:spring-data-commons'
+    implementation "org.springframework.boot:spring-boot-autoconfigure"
     compileOnly "org.springframework.boot:spring-boot-configuration-processor"
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 
-    testCompile 'junit:junit'
-    testCompile 'org.springframework.boot:spring-boot-starter-test'
-    testCompile 'org.springframework.boot:spring-boot-starter-web'
-    testCompile project(path: ':peacetrue-log-service-mybatis', configuration: 'testArtifacts')
 }

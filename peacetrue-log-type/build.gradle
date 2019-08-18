@@ -1,0 +1,11 @@
+description '日志服务类型'
+
+dependencies {
+    api project(":peacetrue-log-service-api")
+    api 'com.github.peacetrue.serialize:peacetrue-serialize-api:1.0-SNAPSHOT'
+    implementation "com.github.peacetrue:peacetrue-spring:1.1.1-SNAPSHOT"
+    implementation 'com.github.peacetrue:peacetrue-jackson:1.2.2-SNAPSHOT'
+    implementation "org.springframework.boot:spring-boot-autoconfigure"
+    compileOnly "org.springframework.boot:spring-boot-autoconfigure"
+    annotationProcessor "org.springframework.boot:spring-boot-autoconfigure"
+}

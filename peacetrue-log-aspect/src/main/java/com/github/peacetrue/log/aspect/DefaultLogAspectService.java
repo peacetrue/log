@@ -1,11 +1,9 @@
 package com.github.peacetrue.log.aspect;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.peacetrue.aspect.AfterParams;
 import com.github.peacetrue.aspect.supports.DurationAroundInterceptor;
 import com.github.peacetrue.log.aspect.config.LogPointcutInfoProvider;
-import com.github.peacetrue.log.service.Log;
+import com.github.peacetrue.log.service.LogAddDTO;
 import com.github.peacetrue.log.service.LogService;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -23,7 +21,6 @@ import org.springframework.scheduling.annotation.Async;
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.util.Objects;
-import java.util.Optional;
 
 /**
  * @author xiayx
@@ -37,10 +34,6 @@ public class DefaultLogAspectService implements LogAspectService, BeanFactoryAwa
     private LogBuilder logBuilder;
     @Autowired
     private LogPointcutInfoProvider logPointcutInfoProvider;
-    @Autowired
-    private ObjectMapper objectMapper;
-    @Autowired
-    private AspectLogProperties properties;
     private BeanFactoryResolver beanFactoryResolver;
 
     @Override
@@ -63,11 +56,11 @@ public class DefaultLogAspectService implements LogAspectService, BeanFactoryAwa
         LogEvaluationContext evaluationContext = this.buildEvaluationContext(joinPoint, afterParams.getReturnValue());
         logger.debug("创建日志表达式取值上下文[{}]", evaluationContext);
 
-        Log log = logBuilder.build(logPointcutInfo, evaluationContext);
+        LogAddDTO log = logBuilder.build(logPointcutInfo, evaluationContext);
         log.setDuration(DurationAroundInterceptor.getDuration(Objects.requireNonNull(afterParams.getData())));
-        setLogInput(log, joinPoint.getArgs());
-        setLogOutput(log, afterParams.getReturnValue());
-        setLogException(log, afterParams.getThrowable());
+        log.setInput(joinPoint.getArgs());
+        log.setOutput(afterParams.getReturnValue());
+        log.setException(afterParams.getThrowable());
         logger.debug("取得日志信息[{}]", log);
 
         logService.add(log);
@@ -97,31 +90,6 @@ public class DefaultLogAspectService implements LogAspectService, BeanFactoryAwa
         evaluationContext.setVariable("returning", returnValue);
         evaluationContext.setBeanResolver(beanFactoryResolver);
         return evaluationContext;
-    }
-
-    protected void setLogInput(Log log, @Nullable Object[] args) {
-        Optional.ofNullable(args).ifPresent(value -> log.setInput(this.writeValueAsString(value, properties.getInputMaxLength())));
-    }
-
-    protected void setLogOutput(Log log, @Nullable Object returnValue) {
-        Optional.ofNullable(returnValue).ifPresent(value -> log.setOutput(this.writeValueAsString(value, properties.getOutputMaxLength())));
-    }
-
-    protected void setLogException(Log log, @Nullable Throwable throwable) {
-        Optional.ofNullable(throwable).ifPresent(value -> log.setException(this.trunc(value.getMessage(), properties.getExceptionMaxLength())));
-    }
-
-    private String writeValueAsString(Object value, int length) {
-        try {
-            return trunc(objectMapper.writeValueAsString(value), length);
-        } catch (JsonProcessingException e) {
-            logger.warn("json转换异常", e);
-            return null;
-        }
-    }
-
-    private String trunc(String string, int length) {
-        return string.length() > length ? string.substring(0, length) : string;
     }
 
     private static Method getMethod(JoinPoint joinPoint) {

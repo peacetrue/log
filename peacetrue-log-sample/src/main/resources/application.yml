@@ -1,0 +1,27 @@
+logging:
+  level:
+    org:
+      springframework: debug
+    com:
+      github:
+        peacetrue: trace
+peacetrue:
+  log:
+    pointcut-infos:
+      LogServiceImpl_query:
+        module-code: log
+        #        record-id: '#p0.id'
+        operate-code: query
+        description: 分页查询日志
+        creator-id: 1
+spring:
+  profiles:
+    include: datasource
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+#    default-property-inclusion: non_empty
+
+server:
+  port: 8081
+
+

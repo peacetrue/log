@@ -1,12 +1,18 @@
 dependencies {
 
-    compile project(":peacetrue-log-service-mybatis")
-    compile project(":peacetrue-log-aspect")
-    compile "org.springframework:spring-jdbc"
+//    implementation project(path: ':peacetrue-log-service-mybatis', configuration: 'testArtifacts')
+    implementation project(':peacetrue-log-service-mybatis')
+    implementation project(':peacetrue-log-controller')
+    implementation project(':peacetrue-log-type')
+    implementation project(':peacetrue-log-aspect')
+    implementation 'org.aspectj:aspectjweaver'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'com.github.peacetrue:peacetrue-result-web:1.0-SNAPSHOT'
+    implementation 'com.github.peacetrue:peacetrue-result-exception-support:1.0-SNAPSHOT'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'com.github.peacetrue.serialize:peacetrue-serialize-jackson:1.0-SNAPSHOT'
+    implementation 'com.h2database:h2'
+    implementation 'com.github.peacetrue:peacetrue-spring:1.1.1-SNAPSHOT'
 
-    testCompile 'junit:junit'
-    testCompile 'org.springframework.boot:spring-boot-starter-test'
-    testCompile 'com.fasterxml.jackson.core:jackson-databind'
-    testCompile 'org.mybatis.spring.boot:mybatis-spring-boot-starter'
-    testCompile project(path: ':peacetrue-log-service-mybatis', configuration: 'testArtifacts')
+
 }

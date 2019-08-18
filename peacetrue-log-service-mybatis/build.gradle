@@ -1,33 +1,39 @@
 description '日志服务mybatis实现'
 
-configurations {
-    testArtifacts.extendsFrom testRuntime
-}
-
 task testJar(type: Jar) {
     archiveClassifier = 'test'
     from sourceSets.test.output
+}
+
+configurations {
+    testArtifacts.extendsFrom testRuntime
 }
 
 artifacts {
     testArtifacts testJar
 }
 
+
 dependencies {
 
-    compile project(":peacetrue-log-service-api")
-    compile "org.springframework.boot:spring-boot-autoconfigure"
+    api project(":peacetrue-log-service-api")
+    api 'org.slf4j:slf4j-api'
+    api 'com.github.peacetrue.serialize:peacetrue-serialize-api:1.0-SNAPSHOT'
+    implementation 'org.mybatis:mybatis'
+    implementation 'org.mybatis.dynamic-sql:mybatis-dynamic-sql'
+    implementation 'org.mybatis:mybatis-spring'
+    implementation 'com.github.pagehelper:pagehelper-spring-boot-starter:1.2.3'
+    implementation 'com.github.peacetrue:peacetrue-mybatis:1.1.2-SNAPSHOT'
+    implementation 'com.github.peacetrue:peacetrue-spring:1.1.1-SNAPSHOT'
+    implementation 'org.springframework.data:spring-data-commons'
+    implementation "org.springframework.boot:spring-boot-autoconfigure"
     compileOnly "org.springframework.boot:spring-boot-configuration-processor"
-    compile 'org.slf4j:slf4j-api'
-    compile 'org.mybatis:mybatis'
-    compile 'org.mybatis.dynamic-sql:mybatis-dynamic-sql'
-    compile 'org.mybatis:mybatis-spring'
-    compile 'com.github.pagehelper:pagehelper-spring-boot-starter:1.2.3'
-    compile 'org.springframework.data:spring-data-commons'
-    compile 'com.google.guava:guava:23.0'
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 
     testCompile 'junit:junit'
     testCompile 'org.springframework.boot:spring-boot-starter-test'
     testCompile 'org.mybatis.spring.boot:mybatis-spring-boot-starter'
     testCompile 'com.h2database:h2'
+    testCompile 'com.github.peacetrue.serialize:peacetrue-serialize-jackson:1.0-SNAPSHOT'
+    testCompile 'com.github.peacetrue.serialize:peacetrue-serialize-java:1.0-SNAPSHOT'
 }

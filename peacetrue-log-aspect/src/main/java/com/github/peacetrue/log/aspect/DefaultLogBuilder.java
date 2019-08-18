@@ -1,6 +1,6 @@
 package com.github.peacetrue.log.aspect;
 
-import com.github.peacetrue.log.service.Log;
+import com.github.peacetrue.log.service.LogAddDTO;
 import com.github.peacetrue.metadata.Module;
 import org.springframework.beans.BeanUtils;
 import org.springframework.expression.ExpressionParser;
@@ -16,24 +16,24 @@ import java.util.Objects;
  */
 public class DefaultLogBuilder extends AbstractLogBuilder {
 
-    private Class<? extends Log> logClass;
+    private Class<? extends LogAddDTO> logClass;
     private Class<?> recordIdType;
     private Class<?> creatorIdType;
     private ExpressionParser expressionParser;
 
-    public DefaultLogBuilder(Class<? extends Log> logClass, ExpressionParser expressionParser) {
+    public DefaultLogBuilder(Class<? extends LogAddDTO> logClass, ExpressionParser expressionParser) {
         this.setLogClass(logClass);
         this.expressionParser = Objects.requireNonNull(expressionParser);
     }
 
-    public void setLogClass(Class<? extends Log> logClass) {
+    public void setLogClass(Class<? extends LogAddDTO> logClass) {
         this.logClass = Objects.requireNonNull(logClass);
         this.recordIdType = BeanUtils.getPropertyDescriptor(logClass, "recordId").getPropertyType();
-        this.creatorIdType = BeanUtils.getPropertyDescriptor(logClass, "creatorId").getPropertyType();
+        this.creatorIdType = BeanUtils.getPropertyDescriptor(logClass, "operatorId").getPropertyType();
     }
 
     @Override
-    protected Log instance(LogEvaluationContext context) {
+    protected LogAddDTO instance(LogEvaluationContext context) {
         return BeanUtils.instantiate(logClass);
     }
 

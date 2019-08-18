@@ -1,8 +1,8 @@
 package com.github.peacetrue.log.controller;
 
-import com.github.peacetrue.log.service.Log;
+import com.github.peacetrue.log.service.LogQueryDTO;
 import com.github.peacetrue.log.service.LogService;
-import com.github.peacetrue.log.service.QueryParams;
+import com.github.peacetrue.log.service.LogVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -27,27 +27,26 @@ public class LogController {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
     @Autowired
-    private LogService<Log> logService;
+    private LogService logService;
 
     @ResponseBody
-    @RequestMapping(value = "${peacetrue.log.query-url:/logs}", params = "page")
-    public Page<Log> query(QueryParams queryParams,
-                           @PageableDefault(sort = "createdTime", direction = Sort.Direction.DESC) Pageable pageable) {
-        logger.info("分页查询日志信息");
-        logger.debug("queryParams: {}, pageable: {}", queryParams, pageable);
-        return logService.query(copy(queryParams), pageable);
+    @RequestMapping(value = "${peacetrue.log.urls.query}", params = "page")
+    public Page<LogVO> query(LogQueryDTO dto,
+                             @PageableDefault(sort = "createdTime", direction = Sort.Direction.DESC) Pageable pageable) {
+        logger.info("分页查询日志信息[{}]", dto);
+        return logService.query(copy(dto), pageable);
     }
 
     //dubbo传输时，子类不被服务提供者识别，所以转换成接口的定义类
-    private static QueryParams copy(QueryParams queryParams) {
-        QueryParams instantiate = BeanUtils.instantiate(QueryParams.class);
+    private static LogQueryDTO copy(LogQueryDTO queryParams) {
+        LogQueryDTO instantiate = BeanUtils.instantiate(LogQueryDTO.class);
         BeanUtils.copyProperties(queryParams, instantiate);
         return instantiate;
     }
 
     @ResponseBody
-    @RequestMapping(value = "${peacetrue.log.query-url:/logs}", params = {"!page", "moduleCode", "recordId"})
-    public List<Log> query(QueryParams queryParams, @RequestParam(defaultValue = "100") Integer size) {
+    @RequestMapping(value = "${peacetrue.log.urls.query}", params = {"!page", "moduleCode", "recordId"})
+    public List<LogVO> query(LogQueryDTO queryParams, @RequestParam(defaultValue = "100") Integer size) {
         logger.info("获取记录[{}-{}]的日志信息", queryParams.getModuleCode(), queryParams.getRecordId());
         PageRequest pageRequest = new PageRequest(0, size, Sort.Direction.ASC, "createdTime");
         return logService.query(queryParams, pageRequest).getContent();

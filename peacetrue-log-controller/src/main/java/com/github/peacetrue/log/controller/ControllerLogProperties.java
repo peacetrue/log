@@ -1,20 +1,30 @@
 package com.github.peacetrue.log.controller;
 
-import com.github.peacetrue.log.service.QueryParams;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.util.Optional;
+
 /**
- * 日志配置
- *
  * @author xiayx
  */
 @Data
 @ConfigurationProperties(prefix = "peacetrue.log")
 public class ControllerLogProperties {
 
-    /** 查询参数的具体实现类 */
-    private Class<? extends QueryParams> queryParamsClass;
-    /** 查询地址 */
-    private String queryUrl = "/logs";
+    private Urls urls = new Urls();
+
+    @Getter
+    @Setter
+    public static class Urls {
+        private String module = "/logs";
+        private String query;
+
+        public String getQuery() {
+            return Optional.ofNullable(query).orElse(module);
+        }
+    }
+
 }

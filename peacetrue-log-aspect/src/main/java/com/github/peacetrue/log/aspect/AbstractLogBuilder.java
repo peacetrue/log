@@ -1,6 +1,6 @@
 package com.github.peacetrue.log.aspect;
 
-import com.github.peacetrue.log.service.Log;
+import com.github.peacetrue.log.service.LogAddDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,19 +15,19 @@ public abstract class AbstractLogBuilder implements LogBuilder {
 
     @Override
     @SuppressWarnings("unchecked")
-    public Log build(LogPointcutInfo logPointcutInfo, LogEvaluationContext context) {
+    public LogAddDTO build(LogPointcutInfo logPointcutInfo, LogEvaluationContext context) {
         logger.info("使用日志表达式取值上下文[{}]构建日志", context);
-        Log log = instance(context);
+        LogAddDTO log = instance(context);
         log.setModuleCode(parseModuleCode(context, logPointcutInfo.getModuleCode()));
         log.setRecordId(parseRecordId(context, logPointcutInfo.getRecordId()));
         log.setOperateCode(parseOperateCode(context, logPointcutInfo.getOperateCode()));
         log.setDescription(parseDescription(context, logPointcutInfo.getDescription()));
-        log.setCreatorId(parseCreatorId(context, logPointcutInfo.getCreatorId()));
+        log.setOperatorId(parseCreatorId(context, logPointcutInfo.getCreatorId()));
         return log;
     }
 
     /** 实例化日志 */
-    protected abstract Log instance(LogEvaluationContext context);
+    protected abstract LogAddDTO instance(LogEvaluationContext context);
 
     /** 解析模块编码 */
     protected abstract String parseModuleCode(LogEvaluationContext context, String expression);
