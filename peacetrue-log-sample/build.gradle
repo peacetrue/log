@@ -5,7 +5,6 @@ dependencies {
     implementation project(':peacetrue-log-controller')
     implementation project(':peacetrue-log-type')
     implementation project(':peacetrue-log-aspect')
-    implementation 'org.aspectj:aspectjweaver'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'com.github.peacetrue:peacetrue-result-web:1.0-SNAPSHOT'
     implementation 'com.github.peacetrue:peacetrue-result-exception-support:1.0-SNAPSHOT'
