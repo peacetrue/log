@@ -7,16 +7,17 @@ module.exports = {
     name: 'LogList',
     template: `
     <div class="log-list">
-        <Card v-show="showCondition">
+        <template v-if="showCondition">
+        <Card >
             <span slot="title">查询条件</span>
             <Form ref="form" :model="params" inline>
                 <FormItem prop="moduleCode">
-                    <Input type="text" v-model="params.moduleCode" placeholder="模块名称"/>
+                    <Input type="text" v-model="params.moduleCode" placeholder="模块编码"/>
                 </FormItem>
                 <FormItem prop="recordId">
                     <Input type="text" v-model="params.recordId" placeholder="记录标识"/>
                 </FormItem>
-                <FormItem prop="'operateCode">
+                <FormItem prop="operateCode">
                     <Input type="text" v-model="params.operateCode" placeholder="操作编码"/>
                 </FormItem>
                 <FormItem prop="description">
@@ -38,8 +39,9 @@ module.exports = {
             </Form>
         </Card>
         <br>
+        </template>
         <Card>
-            <div slot="title">查询结果</div>
+            <div slot="title">{{listTitle}}</div>
             <PageTable ref="pageTable" :url="url" :columns="columns" v-model="params" :success-format="successFormat"></PageTable>
         </Card>
         <Modal v-model="detail.model" title="日志详情" :footer-hide="true" fullscreen>
@@ -69,25 +71,31 @@ module.exports = {
     `,
     props: {
         showCondition: {type: Boolean, required: false, default: true},
+        listTitle: {type: String, required: false, default: '查询结果'},
+        showModule: {type: Boolean, required: false, default: true},
         url: {type: String, required: false, default: '/logs'},
-        params: {type: Object, required: false, default() {return {page: 0, size: 10, createdTime: {}};}},
+        params: {type: Object, required: false, default() {return {page: 0, size: 10, moduleCode: null, recordId: null, operateCode: null, description: null, creatorId: null, createdTime: {}};}},
         successFormat: {type: Function, required: false, default(data) {return data.data;}},
         failureFormat: {type: Function, required: false, default(data) {return data.data;}},
         columns: {
             type: Array, required: false, default() {
-                return [
+                let columns = [
                     {title: '日志标识', key: 'id', width: 120, sortable: 'custom'},
                     {title: '模块编码', key: 'moduleCode', width: 120},
                     {title: '记录标识', key: 'recordId', width: 120, tooltip: true},
                     {title: '操作编码', key: 'operateCode', width: 120},
                     {title: '操作描述', key: 'description', width: 200, tooltip: true},
                     {title: '耗时(秒)', key: 'duration', width: 150, render(h, r) {return h('span', r.row.duration / 1000)}},
+                    {title: '操作状态', width: 150, render: (h, r) => h('span', Boolean(r.row.exception) ? '失败' : '成功')},
                     {title: '异常信息', key: 'exception', tooltip: true},
                     {title: '创建时间', key: 'createdTime', width: 150, sortable: 'custom', tooltip: true, sortType: 'desc'},
-                    {title: '操作', width: 130, render: (h, r) => {return this.renderOperate(h, r);}},
+                    {title: '操作', width: 100, render: (h, r) => {return this.renderOperate(h, r);}},
                 ];
+                if (!this.showModule) columns.splice(0, 3);
+                return columns;
             }
         },
+
         // moduleCodeRender: {type: Function, required: false, default(h, row) {return h('span', row.moduleCode)}},
         // recordIdRender: {type: Function, required: false, default(h, row) {return h('span', row.recordId)}},
     },

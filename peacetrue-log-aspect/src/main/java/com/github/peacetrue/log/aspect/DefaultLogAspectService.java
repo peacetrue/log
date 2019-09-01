@@ -10,12 +10,12 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.aop.aspectj.AspectJAdviceParameterNameDiscoverer;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.expression.BeanFactoryResolver;
+import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.scheduling.annotation.Async;
 
 import javax.annotation.Nullable;
@@ -26,6 +26,8 @@ import java.util.Objects;
  * @author xiayx
  */
 public class DefaultLogAspectService implements LogAspectService, BeanFactoryAware {
+
+    private static final DefaultParameterNameDiscoverer DEFAULT_PARAMETER_NAME_DISCOVERER = new DefaultParameterNameDiscoverer();
 
     private Logger logger = LoggerFactory.getLogger(getClass());
     @Autowired
@@ -84,7 +86,7 @@ public class DefaultLogAspectService implements LogAspectService, BeanFactoryAwa
     protected LogEvaluationContext buildEvaluationContext(ProceedingJoinPoint joinPoint, @Nullable Object returnValue) {
         LogEvaluationContext evaluationContext = new LogEvaluationContext(
                 joinPoint.getTarget(), getMethod(joinPoint), joinPoint.getArgs(),
-                new AspectJAdviceParameterNameDiscoverer(joinPoint.getStaticPart().toLongString()),
+                DEFAULT_PARAMETER_NAME_DISCOVERER,
                 returnValue
         );
         evaluationContext.setVariable("returning", returnValue);

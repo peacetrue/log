@@ -9,7 +9,7 @@
     <script src="../node_modules/iview/dist/iview.js"></script>
     <script src="../node_modules/lodash/lodash.js"></script>
     <script src="../node_modules/axios/dist/axios.js"></script>
-<!--    <script src="../node_modules/vue-json-pretty/vue-json-pretty.js"></script>-->
+    <!--    <script src="../node_modules/vue-json-pretty/vue-json-pretty.js"></script>-->
     <script src="../node_modules/qs/dist/qs.js"></script>
     <link rel="stylesheet" href="../node_modules/peacetrue-iview/dist/components/detail/style.css"/>
     <script src="../node_modules/peacetrue-iview/dist/components/page-table/index.js"></script>
@@ -17,7 +17,7 @@
 </head>
 <body>
 <div id="container">
-    <log-list url="http://localhost:8081/logs"></log-list>
+    <log-list url="http://localhost:8081/logs" :show-condition="false" list-title="日志列表" :show-module="false"></log-list>
 </div>
 <script>
     //处理参数和数据
