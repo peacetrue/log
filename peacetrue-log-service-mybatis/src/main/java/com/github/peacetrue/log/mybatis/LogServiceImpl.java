@@ -9,6 +9,7 @@ import com.github.peacetrue.log.service.LogVO;
 import com.github.peacetrue.mybatis.dynamic.MybatisDynamicUtils;
 import com.github.peacetrue.mybatis.dynamic.sql.GroupConcat;
 import com.github.peacetrue.mybatis.dynamic.sql.select.LimitAndOffsetAdapter;
+import com.github.peacetrue.mybatis.mapper.CommonMapper;
 import com.github.peacetrue.pagehelper.PageHelperUtils;
 import com.github.peacetrue.serialize.SerializeService;
 import com.github.peacetrue.spring.util.BeanUtils;
@@ -53,6 +54,8 @@ public class LogServiceImpl implements LogService {
 
     @Autowired
     private LogMapper logMapper;
+    @Autowired
+    private CommonMapper commonMapper;
     @Autowired(required = false)
     private IdGenerator idGenerator;
     @Autowired
@@ -133,7 +136,7 @@ public class LogServiceImpl implements LogService {
                 .and((SqlColumn<Object>) log.recordId, SqlBuilder.isIn((List<Object>) recordIds))
                 .groupBy(log.moduleCode, log.recordId)
                 .build().render(RenderingStrategy.MYBATIS3);
-        List<String> ids = logMapper.selectListObject(provider);
+        List<String> ids = commonMapper.selectListObject(provider);
         logger.debug("取得所有日志主键[{}]", ids);
         if (ids.isEmpty()) return Collections.emptyList();
 

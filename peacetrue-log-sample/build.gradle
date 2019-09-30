@@ -9,9 +9,9 @@ dependencies {
     implementation 'com.github.peacetrue:peacetrue-result-web:1.0-SNAPSHOT'
     implementation 'com.github.peacetrue:peacetrue-result-exception-support:1.0-SNAPSHOT'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'com.github.peacetrue.serialize:peacetrue-serialize-jackson:1.0-SNAPSHOT'
+    implementation 'com.github.peacetrue.serialize:peacetrue-serialize-jackson'
     implementation 'com.h2database:h2'
-    implementation 'com.github.peacetrue:peacetrue-spring:1.1.1-SNAPSHOT'
+    implementation 'com.github.peacetrue:peacetrue-spring'
 
 
 }

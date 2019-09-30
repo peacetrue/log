@@ -1,6 +1,5 @@
 package com.github.peacetrue.log.mybatis;
 
-import com.github.peacetrue.mybatis.mapper.CommonMapper;
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.type.JdbcType;
 import org.mybatis.dynamic.sql.SqlBuilder;
@@ -27,7 +26,7 @@ import static org.mybatis.dynamic.sql.SqlBuilder.isEqualTo;
 
 @Mapper
 @SuppressWarnings("unchecked")
-public interface LogMapper extends CommonMapper {
+public interface LogMapper {
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     @SelectProvider(type = SqlProviderAdapter.class, method = "select")

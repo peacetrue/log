@@ -18,13 +18,13 @@ dependencies {
 
     api project(":peacetrue-log-service-api")
     api 'org.slf4j:slf4j-api'
-    api 'com.github.peacetrue.serialize:peacetrue-serialize-api:1.0-SNAPSHOT'
+    api 'com.github.peacetrue.serialize:peacetrue-serialize-api'
     implementation 'org.mybatis:mybatis'
     implementation 'org.mybatis.dynamic-sql:mybatis-dynamic-sql'
     implementation 'org.mybatis:mybatis-spring'
-    implementation 'com.github.pagehelper:pagehelper-spring-boot-starter:1.2.3'
-    implementation 'com.github.peacetrue:peacetrue-mybatis:1.1.2-SNAPSHOT'
-    implementation 'com.github.peacetrue:peacetrue-spring:1.1.1-SNAPSHOT'
+    implementation 'com.github.pagehelper:pagehelper-spring-boot-starter'
+    implementation 'com.github.peacetrue:peacetrue-mybatis'
+    implementation 'com.github.peacetrue:peacetrue-spring'
     implementation 'org.springframework.data:spring-data-commons'
     implementation "org.springframework.boot:spring-boot-autoconfigure"
     compileOnly "org.springframework.boot:spring-boot-configuration-processor"
@@ -34,6 +34,6 @@ dependencies {
     testCompile 'org.springframework.boot:spring-boot-starter-test'
     testCompile 'org.mybatis.spring.boot:mybatis-spring-boot-starter'
     testCompile 'com.h2database:h2'
-    testCompile 'com.github.peacetrue.serialize:peacetrue-serialize-jackson:1.0-SNAPSHOT'
-    testCompile 'com.github.peacetrue.serialize:peacetrue-serialize-java:1.0-SNAPSHOT'
+    testCompile 'com.github.peacetrue.serialize:peacetrue-serialize-jackson'
+    testCompile 'com.github.peacetrue.serialize:peacetrue-serialize-java'
 }

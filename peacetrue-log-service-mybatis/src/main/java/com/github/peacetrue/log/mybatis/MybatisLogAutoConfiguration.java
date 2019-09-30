@@ -2,6 +2,7 @@ package com.github.peacetrue.log.mybatis;
 
 import com.github.peacetrue.log.service.LogService;
 import com.github.peacetrue.mybatis.dynamic.MybatisDynamicUtils;
+import com.github.peacetrue.mybatis.mapper.CommonMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -16,7 +17,7 @@ import java.util.Optional;
  */
 @Configuration
 @EnableConfigurationProperties(MybatisLogProperties.class)
-@MapperScan(basePackageClasses = MybatisLogAutoConfiguration.class, annotationClass = Mapper.class)
+@MapperScan(basePackageClasses = {MybatisLogAutoConfiguration.class, CommonMapper.class}, annotationClass = Mapper.class)
 public class MybatisLogAutoConfiguration {
 
 
