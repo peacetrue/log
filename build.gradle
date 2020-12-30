@@ -1,124 +1,65 @@
-plugins {
-    id "maven-publish"
-    id "signing"
-    id "idea"
-    id("io.spring.dependency-management") version "1.0.8.RELEASE"
-    id "java-library"
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url 'https://repo.spring.io/plugins-release' }
+        maven { url 'https://plugins.gradle.org/m2/' }
+    }
+
+    dependencies {
+        classpath "io.spring.gradle:dependency-management-plugin:1.0.8.RELEASE"
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:2.3.3.RELEASE"
+    }
 }
 
-allprojects { project ->
-
-    group "com.github.peacetrue.log"
-    version "2.0.0-SNAPSHOT"
-    description "基于spring-boot的操作日志组件"
-
-    apply plugin: "java"
-    apply plugin: "java-library"
-    sourceCompatibility = 1.8
-    targetCompatibility = 8
-
-    repositories {
-        maven { url "https://oss.sonatype.org/content/groups/staging/" }
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
-        mavenCentral()
-    }
-
-    apply plugin: "idea"
-    idea {
-        module {
-            inheritOutputDirs = false
-            outputDir = tasks.compileJava.destinationDir
-            testOutputDir = tasks.compileTestJava.destinationDir
-            downloadSources = true
-            downloadJavadoc = false
-        }
-    }
+subprojects { project ->
 
     apply plugin: "io.spring.dependency-management"
+    apply plugin: 'org.springframework.boot'
     dependencyManagement {
         imports {
-            mavenBom "org.springframework.boot:spring-boot-dependencies:2.1.8.RELEASE"
             mavenBom "com.github.peacetrue:peacetrue-dependencies:2.0.0-SNAPSHOT"
         }
     }
 
+    group 'com.github.peacetrue.log'
+    version '2.0.0-SNAPSHOT'
+    description '基于 spring-boot 的操作日志组件'
+
+    apply plugin: 'java'
+    apply plugin: 'java-library'
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+
     dependencies {
         compileOnly "org.projectlombok:lombok"
         annotationProcessor "org.projectlombok:lombok"
-        compile "com.google.code.findbugs:jsr305"
+        implementation "com.google.code.findbugs:jsr305"
 
-        testCompile "junit:junit"
+        testImplementation 'org.junit.jupiter:junit-jupiter-api'
+        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+        testImplementation('org.springframework.boot:spring-boot-starter-test') {
+            exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+        }
+
         testCompileOnly "org.projectlombok:lombok"
         testAnnotationProcessor "org.projectlombok:lombok"
-    }
-
-    //样章不需要打包
-    if (name.endsWith("sample")) return
-
-    task sourcesJar(type: Jar) {
-        archiveClassifier = "sources"
-        from sourceSets.main.allJava
-    }
-
-    task javadocJar(type: Jar) {
-        archiveClassifier = "javadoc"
-        from javadoc.destinationDir
-    }
-
-    def repository_snapshots = "https://oss.sonatype.org/content/repositories/snapshots/"
-    def repository_releases = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-
-    apply plugin: "maven-publish"
-    apply plugin: "signing"
-    publishing {
-        publications {
-            mavenJava(MavenPublication) {
-                pom {
-                    name = project.name
-                    description = project.description
-                    url = "https://github.com/peacetrue/log"
-                    licenses {
-                        license {
-                            name = "The Apache License, Version 2.0"
-                            url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
-                        }
-                    }
-                    developers {
-                        developer {
-                            id = "xiayouxue"
-                            name = "xiayouxue"
-                            email = "xiayouxue@hotmail.com"
-                        }
-                    }
-                    scm {
-                        connection = "https://github.com/peacetrue/log.git"
-                        developerConnection = "https://github.com/peacetrue/log.git"
-                        url = "https://github.com/peacetrue/peacetrue/log"
-                    }
-                }
-
-                from components.java
-
-                artifact sourcesJar
-                artifact javadocJar
-            }
-        }
-
-        repositories {
-            maven {
-                url version.endsWith("SNAPSHOT") ? repository_snapshots : repository_releases
-                credentials {
-                    username = ossrhUsername
-                    password = ossrhPassword
-                }
-            }
+        testImplementation "ch.qos.logback:logback-classic"
+        testImplementation 'io.projectreactor:reactor-test'
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+        testImplementation 'org.unitils:unitils-core'
+        testImplementation 'org.jeasy:easy-random-core'
+        testImplementation 'org.yaml:snakeyaml'
+        testImplementation 'org.jeasy:easy-random-bean-validation', {
+            exclude('group': 'org.yaml')
         }
     }
 
-    signing {
-        sign publishing.publications.mavenJava
+    test {
+        useJUnitPlatform()
     }
-
 }
 
 
