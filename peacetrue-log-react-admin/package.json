@@ -1,0 +1,12 @@
+{
+  "name": "peacetrue-log",
+  "version": "0.1.0",
+  "description": "操作日志",
+  "files": [
+    "src/modules"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/peacetrue/peacetrue-log.git"
+  }
+}

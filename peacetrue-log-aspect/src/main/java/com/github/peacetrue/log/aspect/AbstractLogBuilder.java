@@ -1,6 +1,6 @@
 package com.github.peacetrue.log.aspect;
 
-import com.github.peacetrue.log.service.LogAddDTO;
+import com.github.peacetrue.log.LogAdd;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,9 +15,9 @@ public abstract class AbstractLogBuilder implements LogBuilder {
 
     @Override
     @SuppressWarnings("unchecked")
-    public LogAddDTO build(LogPointcutInfo logPointcutInfo, LogEvaluationContext context) {
+    public LogAdd build(LogPointcutInfo logPointcutInfo, LogEvaluationContext context) {
         logger.info("使用日志表达式取值上下文[{}]构建日志", context);
-        LogAddDTO log = instance(context);
+        LogAdd log = instance(context);
         log.setModuleCode(parseModuleCode(context, logPointcutInfo.getModuleCode()));
         log.setRecordId(parseRecordId(context, logPointcutInfo.getRecordId()));
         log.setOperateCode(parseOperateCode(context, logPointcutInfo.getOperateCode()));
@@ -27,13 +27,13 @@ public abstract class AbstractLogBuilder implements LogBuilder {
     }
 
     /** 实例化日志 */
-    protected abstract LogAddDTO instance(LogEvaluationContext context);
+    protected abstract LogAdd instance(LogEvaluationContext context);
 
     /** 解析模块编码 */
     protected abstract String parseModuleCode(LogEvaluationContext context, String expression);
 
     /** 解析记录主键 */
-    protected abstract Object parseRecordId(LogEvaluationContext context, String expression);
+    protected abstract Long parseRecordId(LogEvaluationContext context, String expression);
 
     /** 解析操作编码 */
     protected abstract String parseOperateCode(LogEvaluationContext context, String expression);
@@ -42,6 +42,6 @@ public abstract class AbstractLogBuilder implements LogBuilder {
     protected abstract String parseDescription(LogEvaluationContext context, String expression);
 
     /** 解析创建者主键 */
-    protected abstract Object parseCreatorId(LogEvaluationContext context, String expression);
+    protected abstract Long parseCreatorId(LogEvaluationContext context, String expression);
 
 }

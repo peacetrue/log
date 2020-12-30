@@ -4,34 +4,43 @@ buildscript {
         mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url 'https://repo.spring.io/plugins-release' }
-        maven { url 'https://plugins.gradle.org/m2/' }
     }
 
     dependencies {
+        classpath('com.github.peacetrue.generator:peacetrue-generator-plugin:1.1.0-SNAPSHOT')
+        classpath 'com.github.peacetrue.template:peacetrue-template-model-content:3.0.0-SNAPSHOT', {
+            exclude group: 'ch.qos.logback'
+        }
+        classpath('com.h2database:h2:1.4.196')
         classpath "io.spring.gradle:dependency-management-plugin:1.0.8.RELEASE"
         classpath "org.springframework.boot:spring-boot-gradle-plugin:2.3.3.RELEASE"
     }
 }
 
-subprojects { project ->
+
+allprojects { project ->
+
+    group "com.github.peacetrue.log"
+    version "1.0.0-SNAPSHOT"
+    description "操作日志"
+
+    apply plugin: "java-library"
+    sourceCompatibility = 8
+    targetCompatibility = 8
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url 'https://repo.spring.io/plugins-release' }
+    }
 
     apply plugin: "io.spring.dependency-management"
-    apply plugin: 'org.springframework.boot'
     dependencyManagement {
         imports {
             mavenBom "com.github.peacetrue:peacetrue-dependencies:2.0.0-SNAPSHOT"
         }
     }
-
-    group 'com.github.peacetrue.log'
-    version '2.0.0-SNAPSHOT'
-    description '基于 spring-boot 的操作日志组件'
-
-    apply plugin: 'java'
-    apply plugin: 'java-library'
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
-
 
     dependencies {
         compileOnly "org.projectlombok:lombok"
@@ -48,7 +57,6 @@ subprojects { project ->
         testAnnotationProcessor "org.projectlombok:lombok"
         testImplementation "ch.qos.logback:logback-classic"
         testImplementation 'io.projectreactor:reactor-test'
-        testImplementation 'org.springframework.boot:spring-boot-starter-test'
         testImplementation 'org.unitils:unitils-core'
         testImplementation 'org.jeasy:easy-random-core'
         testImplementation 'org.yaml:snakeyaml'
@@ -60,11 +68,5 @@ subprojects { project ->
     test {
         useJUnitPlatform()
     }
+
 }
-
-
-
-
-
-
-

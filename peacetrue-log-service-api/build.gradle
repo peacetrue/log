@@ -1,6 +1,11 @@
-description '日志服务接口'
+description '操作日志服务接口'
 
 dependencies {
-    api 'com.github.peacetrue:spring-data-commons-page'
     api 'com.github.peacetrue:peacetrue-core'
+    api 'com.google.code.findbugs:jsr305'
+    api 'io.projectreactor:reactor-core'
+    api 'org.springframework.data:spring-data-commons'
+
+    compileOnly 'javax.validation:validation-api'
+    compileOnly 'com.github.peacetrue:peacetrue-validation'
 }

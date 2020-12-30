@@ -1,6 +1,6 @@
 package com.github.peacetrue.log.aspect;
 
-import com.github.peacetrue.log.service.LogAddDTO;
+import com.github.peacetrue.log.service.LogAdd;
 
 import java.lang.annotation.*;
 
@@ -32,19 +32,19 @@ import java.lang.annotation.*;
 //tag::class[]
 public @interface LogPointcut {
 
-    /** 模块编码，对应{@link LogAddDTO#getModuleCode()}，例如：User，不支持spel */
+    /** 模块编码，对应{@link LogAdd#getModuleCode()}，例如：User，不支持spel */
     String moduleCode() default "";
 
-    /** 记录主键表达式，对应{@link LogAddDTO#getRecordId()}，例如：#returning，#returning对应返回值，支持spel */
+    /** 记录主键表达式，对应{@link LogAdd#getRecordId()}，例如：#returning，#returning对应返回值，支持spel */
     String recordId() default "";
 
-    /** 操作编码，对应{@link LogAddDTO#getOperateCode()}，例如：add，支持spel */
+    /** 操作编码，对应{@link LogAdd#getOperateCode()}，例如：add，支持spel */
     String operateCode() default "";
 
-    /** 描述表达式，对应{@link LogAddDTO#getDescription()}，例如：新增用户#{#p0.name}，支持spel */
+    /** 描述表达式，对应{@link LogAdd#getDescription()}，例如：新增用户#{#p0.name}，支持spel */
     String description();
 
-    /** 创建者表达式，对应{@link LogAddDTO#getOperatorId()}，例如: #{#p0.operatorId}，支持spel */
+    /** 创建者表达式，对应{@link LogAdd#getOperatorId()}，例如: #{#p0.operatorId}，支持spel */
     String creatorId();
 }
 //end::class[]

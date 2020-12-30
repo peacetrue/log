@@ -1,6 +1,6 @@
 package com.github.peacetrue.log.aspect;
 
-import com.github.peacetrue.log.service.LogAddDTO;
+import com.github.peacetrue.log.LogAdd;
 import com.github.peacetrue.metadata.Module;
 import org.springframework.beans.BeanUtils;
 import org.springframework.expression.ExpressionParser;
@@ -16,25 +16,17 @@ import java.util.Objects;
  */
 public class DefaultLogBuilder extends AbstractLogBuilder {
 
-    private Class<? extends LogAddDTO> logClass;
-    private Class<?> recordIdType;
-    private Class<?> creatorIdType;
-    private ExpressionParser expressionParser;
+    private final ExpressionParser expressionParser;
+    private Class<? extends LogAdd> logClass;
 
-    public DefaultLogBuilder(Class<? extends LogAddDTO> logClass, ExpressionParser expressionParser) {
-        this.setLogClass(logClass);
+    public DefaultLogBuilder(Class<? extends LogAdd> logClass, ExpressionParser expressionParser) {
+        this.logClass = logClass;
         this.expressionParser = Objects.requireNonNull(expressionParser);
     }
 
-    public void setLogClass(Class<? extends LogAddDTO> logClass) {
-        this.logClass = Objects.requireNonNull(logClass);
-        this.recordIdType = BeanUtils.getPropertyDescriptor(logClass, "recordId").getPropertyType();
-        this.creatorIdType = BeanUtils.getPropertyDescriptor(logClass, "operatorId").getPropertyType();
-    }
-
     @Override
-    protected LogAddDTO instance(LogEvaluationContext context) {
-        return BeanUtils.instantiate(logClass);
+    protected LogAdd instance(LogEvaluationContext context) {
+        return BeanUtils.instantiateClass(logClass);
     }
 
     @Override
@@ -45,9 +37,9 @@ public class DefaultLogBuilder extends AbstractLogBuilder {
     }
 
     @Override
-    protected Object parseRecordId(LogEvaluationContext context, String expression) {
+    protected Long parseRecordId(LogEvaluationContext context, String expression) {
         if (StringUtils.isEmpty(expression)) return null;
-        return expressionParser.parseExpression(expression).getValue(context, recordIdType);
+        return expressionParser.parseExpression(expression).getValue(context, Long.class);
     }
 
     @Override
@@ -61,7 +53,7 @@ public class DefaultLogBuilder extends AbstractLogBuilder {
     }
 
     @Override
-    protected Object parseCreatorId(LogEvaluationContext context, String expression) {
-        return expressionParser.parseExpression(expression, ParserContext.TEMPLATE_EXPRESSION).getValue(context, creatorIdType);
+    protected Long parseCreatorId(LogEvaluationContext context, String expression) {
+        return expressionParser.parseExpression(expression, ParserContext.TEMPLATE_EXPRESSION).getValue(context, Long.class);
     }
 }

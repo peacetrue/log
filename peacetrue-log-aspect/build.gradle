@@ -13,6 +13,6 @@ dependencies {
     testCompile "junit:junit"
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-logging'
-    testImplementation project(path: ':peacetrue-log-service-mybatis', configuration: 'testArtifacts')
+    testImplementation project(path: ':peacetrue-log-service-impl', configuration: 'testArtifacts')
 
 }

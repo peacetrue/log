@@ -10,16 +10,16 @@ import com.github.peacetrue.aspect.BeforeResult;
  */
 public class DurationAroundInterceptor extends AbstractAroundInterceptor<Long> {
 
+    /** 获取耗时 */
+    public static long getDuration(long startedTime) {
+        return System.currentTimeMillis() - startedTime;
+    }
+
     @Override
     public BeforeResult<Long> beforeProceed(AroundParams aroundParams) {
         BeforeResultImpl<Long> beforeResult = (BeforeResultImpl<Long>) super.beforeProceed(aroundParams);
         beforeResult.setData(System.currentTimeMillis());
         return beforeResult;
-    }
-
-    /** 获取耗时 */
-    public static long getDuration(long startedTime) {
-        return System.currentTimeMillis() - startedTime;
     }
 
 }

@@ -1,0 +1,7 @@
+description '操作日志客户端'
+
+dependencies {
+    api project(":peacetrue-log-service-api")
+    api 'org.springframework.data:spring-data-commons'
+    api 'com.playtika.reactivefeign:feign-reactor-spring-configuration'
+}

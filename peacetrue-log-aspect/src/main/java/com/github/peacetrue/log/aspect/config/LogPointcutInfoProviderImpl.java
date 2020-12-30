@@ -19,15 +19,15 @@ public class LogPointcutInfoProviderImpl implements LogPointcutInfoProvider {
         this.pointcutInfos.putAll(Objects.requireNonNull(pointcutInfos));
     }
 
-    @Override
-    public LogPointcutInfo findLogPointcutInfo(JoinPoint joinPoint) {
-        String uniqueId = uniqueId(joinPoint);
-        return pointcutInfos.get(uniqueId);
-    }
-
     public static String uniqueId(JoinPoint joinPoint) {
         String simpleName = joinPoint.getTarget().getClass().getSimpleName();
         String methodName = ((MethodSignature) joinPoint.getSignature()).getMethod().getName();
         return simpleName + "_" + methodName;
+    }
+
+    @Override
+    public LogPointcutInfo findLogPointcutInfo(JoinPoint joinPoint) {
+        String uniqueId = uniqueId(joinPoint);
+        return pointcutInfos.get(uniqueId);
     }
 }

@@ -1,0 +1,31 @@
+version: '2'
+
+networks:
+  peacetrue-microservice:
+    external:
+      name: peacetrue-microservice
+
+services:
+  peacetrue-log:
+    environment:
+      MICROSERVICE_SECURITY_PASSWORD: ${MICROSERVICE_SECURITY_PASSWORD}
+      MICROSERVICE_SSL_PASSWORD: ${MICROSERVICE_SSL_PASSWORD}
+    container_name: peacetrue-log
+    hostname: peacetrue-log
+    #    build: peacetrue-log
+    image: peacetrueopenjdk:latest
+    privileged: true
+    #    restart: unless-stopped
+    volumes:
+      - ../peacetrue-log-app/build/libs/peacetrue-log-app-1.0.0-SNAPSHOT.jar:/app.jar
+      - ./logs:/logs
+    expose:
+      - ${PORT}
+    ports:
+      - ${PORT}:${PORT}
+    networks:
+      - peacetrue-microservice
+    entrypoint: java -jar app.jar ${JAR_ENV}
+# docker-compose down
+# docker-compose up --build -d
+# docker-compose config

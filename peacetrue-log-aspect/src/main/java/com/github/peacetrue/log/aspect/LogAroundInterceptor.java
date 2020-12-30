@@ -5,6 +5,7 @@ import com.github.peacetrue.aspect.supports.DurationAroundInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import reactor.core.scheduler.Schedulers;
 
 import javax.annotation.Nullable;
 
@@ -21,11 +22,7 @@ public class LogAroundInterceptor extends DurationAroundInterceptor {
     @Override
     public Object afterProceed(AfterParams<Long> afterParams) throws Throwable {
         logger.info("记录日志信息");
-        try {
-            logAspectService.addLog(afterParams);
-        } catch (Throwable e) {
-            logger.error("添加日志异常", e);
-        }
+        logAspectService.addLog(afterParams).subscribeOn(Schedulers.boundedElastic()).subscribe();
         return super.afterProceed(afterParams);
     }
 

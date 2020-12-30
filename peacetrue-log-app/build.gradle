@@ -1,0 +1,33 @@
+buildscript {
+    repositories {
+        maven { url 'https://repo.spring.io/plugins-release' }
+    }
+
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:2+")
+    }
+}
+
+apply plugin: 'org.springframework.boot'
+description '操作日志应用'
+
+dependencies {
+
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
+    runtimeOnly 'dev.miku:r2dbc-mysql'
+    runtimeOnly 'mysql:mysql-connector-java'
+    implementation 'com.github.peacetrue:peacetrue-operator'
+    implementation 'com.github.peacetrue:peacetrue-spring'
+    implementation project(":peacetrue-log-controller")
+    implementation project(":peacetrue-log-service-impl")
+
+    implementation 'org.springframework.cloud:spring-cloud-config-client'
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+    implementation 'org.springframework.cloud:spring-cloud-starter-security'
+
+    implementation 'org.springframework.security:spring-security-config'
+    implementation 'org.springframework.security:spring-security-oauth2-resource-server'
+    implementation 'org.springframework.security:spring-security-oauth2-jose'
+    implementation 'com.nimbusds:oauth2-oidc-sdk:7+'
+}

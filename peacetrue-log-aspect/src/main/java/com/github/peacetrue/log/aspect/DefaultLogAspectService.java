@@ -2,9 +2,9 @@ package com.github.peacetrue.log.aspect;
 
 import com.github.peacetrue.aspect.AfterParams;
 import com.github.peacetrue.aspect.supports.DurationAroundInterceptor;
+import com.github.peacetrue.log.LogAdd;
+import com.github.peacetrue.log.LogService;
 import com.github.peacetrue.log.aspect.config.LogPointcutInfoProvider;
-import com.github.peacetrue.log.service.LogAddDTO;
-import com.github.peacetrue.log.service.LogService;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -16,7 +16,7 @@ import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.expression.BeanFactoryResolver;
 import org.springframework.core.DefaultParameterNameDiscoverer;
-import org.springframework.scheduling.annotation.Async;
+import reactor.core.publisher.Mono;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
@@ -38,6 +38,17 @@ public class DefaultLogAspectService implements LogAspectService, BeanFactoryAwa
     private LogPointcutInfoProvider logPointcutInfoProvider;
     private BeanFactoryResolver beanFactoryResolver;
 
+    private static Method getMethod(JoinPoint joinPoint) {
+        Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
+        if (!method.getDeclaringClass().isInterface()) return method;
+
+        try {
+            return joinPoint.getTarget().getClass().getDeclaredMethod(method.getName(), method.getParameterTypes());
+        } catch (NoSuchMethodException e) {
+            throw new IllegalStateException(String.format("未能找到切点[%s]对应的方法", joinPoint.getSignature().toShortString()), e);
+        }
+    }
+
     @Override
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
         this.beanFactoryResolver = new BeanFactoryResolver(beanFactory);
@@ -45,8 +56,7 @@ public class DefaultLogAspectService implements LogAspectService, BeanFactoryAwa
 
     @Override
     @SuppressWarnings("unchecked")
-    @Async(AspectLogAutoConfiguration.LOG_TASK_EXECUTOR_NAME)
-    public void addLog(AfterParams<Long> afterParams) {
+    public Mono<Void> addLog(AfterParams<Long> afterParams) {
         ProceedingJoinPoint joinPoint = afterParams.getAroundParams().getProceedingJoinPoint();
 
         LogPointcutInfo logPointcutInfo = this.getLogPointcutInfo(afterParams);
@@ -58,14 +68,14 @@ public class DefaultLogAspectService implements LogAspectService, BeanFactoryAwa
         LogEvaluationContext evaluationContext = this.buildEvaluationContext(joinPoint, afterParams.getReturnValue());
         logger.debug("创建日志表达式取值上下文[{}]", evaluationContext);
 
-        LogAddDTO log = logBuilder.build(logPointcutInfo, evaluationContext);
+        LogAdd log = logBuilder.build(logPointcutInfo, evaluationContext);
         log.setDuration(DurationAroundInterceptor.getDuration(Objects.requireNonNull(afterParams.getData())));
         log.setInput(joinPoint.getArgs());
         log.setOutput(afterParams.getReturnValue());
         log.setException(afterParams.getThrowable());
         logger.debug("取得日志信息[{}]", log);
 
-        logService.add(log);
+        return logService.add(log).then();
     }
 
     protected LogPointcutInfo getLogPointcutInfo(AfterParams<Long> afterParams) {
@@ -82,7 +92,6 @@ public class DefaultLogAspectService implements LogAspectService, BeanFactoryAwa
         }
     }
 
-
     protected LogEvaluationContext buildEvaluationContext(ProceedingJoinPoint joinPoint, @Nullable Object returnValue) {
         LogEvaluationContext evaluationContext = new LogEvaluationContext(
                 joinPoint.getTarget(), getMethod(joinPoint), joinPoint.getArgs(),
@@ -92,17 +101,6 @@ public class DefaultLogAspectService implements LogAspectService, BeanFactoryAwa
         evaluationContext.setVariable("returning", returnValue);
         evaluationContext.setBeanResolver(beanFactoryResolver);
         return evaluationContext;
-    }
-
-    private static Method getMethod(JoinPoint joinPoint) {
-        Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
-        if (!method.getDeclaringClass().isInterface()) return method;
-
-        try {
-            return joinPoint.getTarget().getClass().getDeclaredMethod(method.getName(), method.getParameterTypes());
-        } catch (NoSuchMethodException e) {
-            throw new IllegalStateException(String.format("未能找到切点[%s]对应的方法", joinPoint.getSignature().toShortString()), e);
-        }
     }
 
 }

@@ -1,13 +1,11 @@
-description '日志控制器'
+description '操作日志控制器'
 
 dependencies {
-
     api project(":peacetrue-log-service-api")
-    api 'org.slf4j:slf4j-api'
-    implementation "org.springframework:spring-webmvc"
-    implementation 'org.springframework.data:spring-data-commons'
-    implementation "org.springframework.boot:spring-boot-autoconfigure"
-    compileOnly "org.springframework.boot:spring-boot-configuration-processor"
-    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+    implementation "com.github.peacetrue:peacetrue-spring"
+    implementation "org.springframework.boot:spring-boot-starter-webflux"
+    implementation "org.springframework.data:spring-data-commons"
 
+    testImplementation project(':peacetrue-log-service-impl')
+    testImplementation project(path: ':peacetrue-log-service-impl', configuration: 'testArtifacts')
 }

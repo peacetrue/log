@@ -1,7 +1,6 @@
 package com.github.peacetrue.aspect;
 
 import com.github.peacetrue.aspect.supports.AroundParamsImpl;
-import com.github.peacetrue.log.aspect.LogPointcut;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;

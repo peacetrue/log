@@ -1,6 +1,6 @@
 package com.github.peacetrue.log.aspect;
 
-import com.github.peacetrue.log.service.LogAddDTO;
+import com.github.peacetrue.log.LogAdd;
 
 /**
  * 日志构建器
@@ -9,5 +9,5 @@ import com.github.peacetrue.log.service.LogAddDTO;
  */
 public interface LogBuilder {
     /** 构建日志 */
-    LogAddDTO build(LogPointcutInfo logPointcutInfo, LogEvaluationContext context);
+    LogAdd build(LogPointcutInfo logPointcutInfo, LogEvaluationContext context);
 }
