@@ -1,6 +1,5 @@
 package com.github.peacetrue.log.aspect;
 
-import com.github.peacetrue.log.service.LogAdd;
 
 import java.lang.annotation.*;
 

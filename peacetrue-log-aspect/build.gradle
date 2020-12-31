@@ -5,14 +5,19 @@ dependencies {
     api project(":peacetrue-log-service-api")
     api 'org.slf4j:slf4j-api'
     api 'org.aspectj:aspectjweaver'
+    api 'com.github.peacetrue.serialize:peacetrue-serialize-api:1.0-SNAPSHOT'
     implementation "com.fasterxml.jackson.core:jackson-databind"
     implementation "org.springframework.boot:spring-boot-autoconfigure"
     compileOnly "org.springframework.boot:spring-boot-configuration-processor"
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 
     testCompile "junit:junit"
+    testImplementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
+    testImplementation 'io.r2dbc:r2dbc-h2'
+    testImplementation 'com.h2database:h2'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-logging'
+    testImplementation 'com.github.peacetrue.serialize:peacetrue-serialize-jackson:1.0-SNAPSHOT'
     testImplementation project(path: ':peacetrue-log-service-impl', configuration: 'testArtifacts')
 
 }

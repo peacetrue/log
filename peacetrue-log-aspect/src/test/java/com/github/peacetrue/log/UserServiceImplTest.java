@@ -1,33 +1,38 @@
 package com.github.peacetrue.log;
 
 import com.github.peacetrue.log.aspect.AspectLogAutoConfiguration;
-import com.github.peacetrue.log.mybatis.MybatisLogAutoConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.data.r2dbc.R2dbcDataAutoConfiguration;
+import org.springframework.boot.autoconfigure.data.r2dbc.R2dbcRepositoriesAutoConfiguration;
+import org.springframework.boot.autoconfigure.data.r2dbc.R2dbcTransactionManagerAutoConfiguration;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration;
+import org.springframework.boot.autoconfigure.r2dbc.R2dbcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
+import reactor.core.scheduler.Schedulers;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
-        DataSourceAutoConfiguration.class,
-        JdbcTemplateAutoConfiguration.class,
-        DataSourceTransactionManagerAutoConfiguration.class,
-        MybatisAutoConfiguration.class,
-        MybatisLogAutoConfiguration.class,
+//        DataSourceAutoConfiguration.class,
+//        JdbcTemplateAutoConfiguration.class,
+//        DataSourceTransactionManagerAutoConfiguration.class,
+        R2dbcAutoConfiguration.class,
+        R2dbcDataAutoConfiguration.class,
+        R2dbcRepositoriesAutoConfiguration.class,
+        R2dbcTransactionManagerAutoConfiguration.class,
+        ServiceLogAutoConfiguration.class,
         AspectLogAutoConfiguration.class,
         JacksonAutoConfiguration.class,
         UserServiceImpl.class,
         UserModifyAspect.class
 })
+@EnableAutoConfiguration
 @TestPropertySource("classpath:/application.properties")
 //@Transactional
 public class UserServiceImplTest {
@@ -41,7 +46,11 @@ public class UserServiceImplTest {
         User user = new User();
         user.setName("name");
         user.setPassword("password");
-        logger.info("return: {}", userService.add(user));
+        userService
+                .add(user)
+                .subscribeOn(Schedulers.boundedElastic())
+                .subscribe()
+        ;
         Thread.sleep(1000L);
     }
 

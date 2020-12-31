@@ -1,10 +1,12 @@
 package com.github.peacetrue.log;
 
+import reactor.core.publisher.Mono;
+
 /**
  * @author xiayx
  */
 public interface UserService {
-    int add(User user);
+    Mono<User> add(User user);
 
-    int modify(User user);
+    Mono<User> modify(User user);
 }

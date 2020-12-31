@@ -5,6 +5,7 @@ import com.github.peacetrue.aspect.supports.DurationAroundInterceptor;
 import com.github.peacetrue.log.LogAdd;
 import com.github.peacetrue.log.LogService;
 import com.github.peacetrue.log.aspect.config.LogPointcutInfoProvider;
+import com.github.peacetrue.serialize.SerializeService;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -16,11 +17,15 @@ import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.expression.BeanFactoryResolver;
 import org.springframework.core.DefaultParameterNameDiscoverer;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 
 /**
  * @author xiayx
@@ -34,6 +39,8 @@ public class DefaultLogAspectService implements LogAspectService, BeanFactoryAwa
     private LogService logService;
     @Autowired
     private LogBuilder logBuilder;
+    @Autowired
+    private SerializeService<String> serializeService;
     @Autowired
     private LogPointcutInfoProvider logPointcutInfoProvider;
     private BeanFactoryResolver beanFactoryResolver;
@@ -56,26 +63,67 @@ public class DefaultLogAspectService implements LogAspectService, BeanFactoryAwa
 
     @Override
     @SuppressWarnings("unchecked")
-    public Mono<Void> addLog(AfterParams<Long> afterParams) {
+    public Object addLog(AfterParams<Long> afterParams) {
         ProceedingJoinPoint joinPoint = afterParams.getAroundParams().getProceedingJoinPoint();
+        String signature = joinPoint.getSignature().toShortString();
+        Object returnValue = afterParams.getReturnValue();
 
         LogPointcutInfo logPointcutInfo = this.getLogPointcutInfo(afterParams);
         logger.debug("取得日志切面信息[{}]", logPointcutInfo);
         if (logPointcutInfo == null) {
-            throw new IllegalStateException(String.format("未找到与切点[%s]匹配的日志切面信息", joinPoint.getSignature().toShortString()));
+            logger.warn("未找到与切点[{}]匹配的日志切面信息", signature);
+            return returnValue;
         }
 
-        LogEvaluationContext evaluationContext = this.buildEvaluationContext(joinPoint, afterParams.getReturnValue());
+        Function<Object, LogAdd> logAddBuilder = value -> {
+            boolean isError = value instanceof Throwable;
+            return getLogAdd(joinPoint, logPointcutInfo, afterParams, isError ? null : value, isError ? value : null);
+        };
+        if (returnValue instanceof Mono) {
+            return afterParams.getThrowable() == null
+                    ? this.addLog(((Mono<Object>) returnValue), logAddBuilder)
+                    : this.addLog(Mono.empty(), logAddBuilder).subscribeOn(Schedulers.boundedElastic()).subscribe();
+        } else if (returnValue instanceof Flux) {
+            Mono<List<Object>> mono = ((Flux<Object>) returnValue).collectList();
+            return afterParams.getThrowable() == null
+                    ? this.addLog(mono, logAddBuilder).flatMapMany(Flux::fromIterable)
+                    : this.addLog(mono, logAddBuilder).subscribeOn(Schedulers.boundedElastic()).subscribe();
+        } else {
+            LogAdd logAdd = logAddBuilder.apply(afterParams.getReturnValue());
+            logService.add(logAdd).subscribeOn(Schedulers.boundedElastic()).subscribe();
+            return afterParams.getReturnValue();
+        }
+    }
+
+    private LogAdd getLogAdd(ProceedingJoinPoint joinPoint, LogPointcutInfo logPointcutInfo,
+                             AfterParams<Long> afterParams, Object returnValue, Object throwable) {
+        LogEvaluationContext evaluationContext = this.buildEvaluationContext(joinPoint, returnValue);
         logger.debug("创建日志表达式取值上下文[{}]", evaluationContext);
 
-        LogAdd log = logBuilder.build(logPointcutInfo, evaluationContext);
-        log.setDuration(DurationAroundInterceptor.getDuration(Objects.requireNonNull(afterParams.getData())));
-        log.setInput(joinPoint.getArgs());
-        log.setOutput(afterParams.getReturnValue());
-        log.setException(afterParams.getThrowable());
-        logger.debug("取得日志信息[{}]", log);
+        LogAdd logAdd = logBuilder.build(logPointcutInfo, evaluationContext);
+        logAdd.setDuration(DurationAroundInterceptor.getDuration(Objects.requireNonNull(afterParams.getData())));
+        logAdd.setInput(abbr(serializeService.serialize(joinPoint.getArgs()), 2048));
+        logAdd.setOutput(abbr(serializeService.serialize(returnValue), 2048));
+        logAdd.setException(abbr(serializeService.serialize(throwable), 1024));
+        logger.debug("取得日志信息[{}]", logAdd);
+        return logAdd;
+    }
 
-        return logService.add(log).then();
+    private String abbr(String string, int length) {
+        if (string == null) return null;
+        if (string.length() <= length) return string;
+        return string.substring(0, length);
+    }
+
+    private <T> Mono<T> addLog(Mono<T> mono, Function<Object, LogAdd> logAddBuilder) {
+        return mono
+                .doOnSuccess(o -> {
+                    logService.add(logAddBuilder.apply(o)).subscribeOn(Schedulers.boundedElastic()).subscribe();
+                })
+                .doOnError(o -> {
+                    logService.add(logAddBuilder.apply(o)).subscribeOn(Schedulers.boundedElastic()).subscribe();
+                })
+                ;
     }
 
     protected LogPointcutInfo getLogPointcutInfo(AfterParams<Long> afterParams) {

@@ -17,7 +17,7 @@ import java.util.Map;
 public class AspectLogProperties {
 
     /** 日志的具体实现类 */
-    private Class<? extends LogAdd> concreteClass;
+    private Class<? extends LogAdd> concreteClass = LogAdd.class;
     /** 切面信息配置 */
     private Map<String, LogPointcutInfo> pointcutInfos = new HashMap<>();
 
