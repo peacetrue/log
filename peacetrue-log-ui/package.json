@@ -47,7 +47,7 @@
   "dependencies": {
     "axios": "^0.19.0",
     "iview": "^3.4.2",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.21",
     "peacetrue-iview": "^1.0.10",
     "vue": "^2.6.10",
     "vue-json-pretty": "^1.6.0"
